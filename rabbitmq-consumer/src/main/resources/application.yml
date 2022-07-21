@@ -6,4 +6,8 @@ spring:
     password: ych123
     virtual-host: /
     publisher-confirm-type: correlated
+    listener:
+      simple:
+        acknowledge-mode: manual #手动签收
+        prefetch: 1
 
