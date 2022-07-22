@@ -12,7 +12,7 @@ public class TTLConfig {
     @Bean("queue_ttl")
     public Queue queue(){
         return QueueBuilder.durable(QUEUE_NAME)
-                .ttl(10000)
+                .ttl(100000)
                 .build();
     }
 

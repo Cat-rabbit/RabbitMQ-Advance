@@ -3,6 +3,9 @@ package com.mq;
 import com.mq.config.RabbitMQConfig;
 import com.mq.config.TTLConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -61,6 +64,10 @@ class RabbitmqProducerApplicationTests {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "confirm", "测试confirm");
     }
 
+    /**
+     * 消费端限流
+     *  prefetch
+     */
     @Test
     void testSend() {
         for (int i = 0; i < 10; i++) {
@@ -70,13 +77,30 @@ class RabbitmqProducerApplicationTests {
 
     /**
      * TTL过期时间
-     *  队列过期
-     *  消息单独过期
+     *  1.队列过期
+     *  2.消息单独过期
      */
     @Test
     void testTTL() {
+        //队列过期
+//        for (int i = 0; i < 10; i++) {
+//            rabbitTemplate.convertAndSend(TTLConfig.EXCHANGE_NAME, "ttl.hello", "测试message_ttl");
+//        }
+        //消息单独过期
         for (int i = 0; i < 10; i++) {
-            rabbitTemplate.convertAndSend(TTLConfig.EXCHANGE_NAME, "ttl.hello", "测试message_ttl");
+            if (i == 5) {
+                rabbitTemplate.convertAndSend(TTLConfig.EXCHANGE_NAME, "ttl.hello", "测试message_ttl", new MessagePostProcessor() {
+                    //消息后处理对象
+                    @Override
+                    public Message postProcessMessage(Message message) throws AmqpException {
+                        //1.设置消息过期时间
+                        message.getMessageProperties().setExpiration("5000");
+                        return message;
+                    }
+                });
+            }else{
+                rabbitTemplate.convertAndSend(TTLConfig.EXCHANGE_NAME, "ttl.hello", "测试message_ttl");
+            }
         }
     }
 }
