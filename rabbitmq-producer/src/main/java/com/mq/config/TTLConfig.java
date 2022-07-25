@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class TTLConfig {
     public static final String QUEUE_NAME="queue_ttl";
     public static final String EXCHANGE_NAME="exchange_ttl";

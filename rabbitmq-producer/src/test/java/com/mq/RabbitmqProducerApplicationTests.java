@@ -103,4 +103,35 @@ class RabbitmqProducerApplicationTests {
             }
         }
     }
+
+    /**
+     * 测试死信队列
+     *  1.队列过期时间
+     *  2.队列长度限制
+     *  3.消息拒收
+     */
+    @Test
+    void testDLX() {
+        //1.
+//        rabbitTemplate.convertAndSend("test_exchange_dlx","test.dlx.hello","我是一条消息，我会死吗？");
+        //2.测试队列长度限制
+//        for (int i = 0; i < 20; i++) {
+//            rabbitTemplate.convertAndSend("test_exchange_dlx","test.dlx.hello","我是一条消息，我会死吗？");
+//        }
+        //3.测试拒收消息
+        rabbitTemplate.convertAndSend("test_exchange_dlx","test.dlx.hello","我是一条消息，我会死吗？");
+    }
+
+    /**
+     * 延迟队列
+     */
+    @Test
+    void testDelay() throws InterruptedException {
+        //发送订单消息，订单系统下单成功后发送
+        rabbitTemplate.convertAndSend("order_exchange","order.msg","订单信息：orderId=1,createTime='2022年7月22日11时20分15秒'");
+        for (int i = 10; i >0 ; --i) {
+            System.out.println(i+"...");
+            Thread.sleep(1000);
+        }
+    }
 }
